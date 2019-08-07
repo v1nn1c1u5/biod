@@ -29,7 +29,12 @@ export default class Feed extends Component {
   async componentDidMount() {
       //this.registerToSocket();
     
-      const response = await api.get('posts');
+      const response = await api.get('posts')
+            .catch( (erro) => {
+              console.log(erro.response);
+              
+
+            });
 
       console.log(response.data);
 

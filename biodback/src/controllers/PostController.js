@@ -22,13 +22,6 @@ module.exports = {
         const [name] = image.split('.');
         const fileName = `${name}.jpg`;
         const fileTemp = path.resolve(req.file.destination, '.', `${name}.tmp`);
-        
-        // console.log("filename             : "+fileName);
-        // console.log("filetemp             : "+fileTemp);
-        // console.log("name                 : "+name);
-        // console.log("req.file.path        : "+req.file.path);
-        // console.log("req.file.destination : "+req.file.destination);
-        // console.log("toFile               : "+path.resolve(req.file.destination, fileName));
 
         //renomeia a extensão do arquivo para .tmp
         fs.renameSync(req.file.path, fileTemp);

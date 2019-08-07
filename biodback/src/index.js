@@ -2,15 +2,24 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 const cors = require('cors');
+const bodyParser = require('body-parser');
 
 const app = express();
 
 const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
-mongoose.connect('mongodb+srv://root:politoed@cluster0-pjbfy.mongodb.net/test?retryWrites=true&w=majority', {
-    useNewUrlParser: true,
-});
+mongoose.Promise = global.Promise;
+
+const env = require('./config/cosmodb.js');
+
+// eslint-disable-next-line max-len
+const mongoUri = `mongodb://${env.accountName}:${env.key}@${env.accountName}.documents.azure.com:${env.port}/${env.databaseName}?ssl=true`;
+mongoose.set('debug',true);
+console.log('URI de conexão: '+mongoUri);
+
+//Conexao com o banco de dados mongodb
+mongoose.connect(mongoUri, { useNewUrlParser: true });
 
 
 // qualquer nova rota ou chamada a partir deste ponto 
@@ -23,6 +32,11 @@ app.use((req, res, next) => {
 })
 
 
+//habilitando receber um body com JSON
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
+
 //habilitando o CORS para controle dos acessos
 app.use(cors());
 
@@ -30,6 +44,7 @@ app.use(cors());
 app.use('/files', express.static(path.resolve(__dirname, '..', 'uploads')));
 
 app.use(require('./routes'));
+
 
 server.listen(3333);
 
